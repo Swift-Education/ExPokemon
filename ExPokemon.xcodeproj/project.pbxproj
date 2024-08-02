@@ -62,14 +62,22 @@
 		B51933B12C5C7CA0001B3D26 /* ExPokemon */ = {
 			isa = PBXGroup;
 			children = (
-				B51933B22C5C7CA0001B3D26 /* AppDelegate.swift */,
-				B51933B42C5C7CA0001B3D26 /* SceneDelegate.swift */,
+				B5C4D4802C5C7F96007A4D3C /* Applications */,
 				B51933B62C5C7CA0001B3D26 /* ViewController.swift */,
 				B51933B82C5C7CA1001B3D26 /* Assets.xcassets */,
 				B51933BA2C5C7CA1001B3D26 /* LaunchScreen.storyboard */,
 				B51933BD2C5C7CA1001B3D26 /* Info.plist */,
 			);
 			path = ExPokemon;
+			sourceTree = "<group>";
+		};
+		B5C4D4802C5C7F96007A4D3C /* Applications */ = {
+			isa = PBXGroup;
+			children = (
+				B51933B22C5C7CA0001B3D26 /* AppDelegate.swift */,
+				B51933B42C5C7CA0001B3D26 /* SceneDelegate.swift */,
+			);
+			path = Applications;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
