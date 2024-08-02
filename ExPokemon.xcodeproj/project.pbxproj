@@ -17,6 +17,7 @@
 		B51933C92C5C7E41001B3D26 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = B51933C82C5C7E41001B3D26 /* RxRelay */; };
 		B51933CB2C5C7E41001B3D26 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B51933CA2C5C7E41001B3D26 /* RxSwift */; };
 		B5C4D4842C5C808A007A4D3C /* PokemonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4832C5C808A007A4D3C /* PokemonListView.swift */; };
+		B5C4D4862C5C86AB007A4D3C /* PokemonListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4852C5C86AB007A4D3C /* PokemonListCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		B51933BB2C5C7CA1001B3D26 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B51933BD2C5C7CA1001B3D26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5C4D4832C5C808A007A4D3C /* PokemonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListView.swift; sourceTree = "<group>"; };
+		B5C4D4852C5C86AB007A4D3C /* PokemonListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonListCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 			children = (
 				B51933B62C5C7CA0001B3D26 /* PokemonListViewController.swift */,
 				B5C4D4832C5C808A007A4D3C /* PokemonListView.swift */,
+				B5C4D4852C5C86AB007A4D3C /* PokemonListCell.swift */,
 			);
 			path = PokemonListScene;
 			sourceTree = "<group>";
@@ -179,6 +182,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5C4D4842C5C808A007A4D3C /* PokemonListView.swift in Sources */,
+				B5C4D4862C5C86AB007A4D3C /* PokemonListCell.swift in Sources */,
 				B51933B72C5C7CA0001B3D26 /* PokemonListViewController.swift in Sources */,
 				B51933B32C5C7CA0001B3D26 /* AppDelegate.swift in Sources */,
 				B51933B52C5C7CA0001B3D26 /* SceneDelegate.swift in Sources */,
