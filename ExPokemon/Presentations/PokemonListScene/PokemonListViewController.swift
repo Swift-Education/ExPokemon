@@ -32,7 +32,7 @@ final class PokemonListViewController: UIViewController {
 
 extension PokemonListViewController: PokemonListViewDelegate {
     func cooridinateVC(with index: Int) {
-        let vc = PokemonDetailViewController(nibName: nil, bundle: nil)
+        let vc = PokemonDetailViewController(rootView: PokemonDetailView(frame: .zero))
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
