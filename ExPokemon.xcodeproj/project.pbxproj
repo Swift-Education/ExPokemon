@@ -18,6 +18,9 @@
 		B51933CB2C5C7E41001B3D26 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B51933CA2C5C7E41001B3D26 /* RxSwift */; };
 		B5C4D4842C5C808A007A4D3C /* PokemonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4832C5C808A007A4D3C /* PokemonListView.swift */; };
 		B5C4D4862C5C86AB007A4D3C /* PokemonListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4852C5C86AB007A4D3C /* PokemonListCell.swift */; };
+		B5C4D4882C5C8D44007A4D3C /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4872C5C8D44007A4D3C /* NetworkManager.swift */; };
+		B5C4D48A2C5CA10A007A4D3C /* PokemonDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4892C5CA10A007A4D3C /* PokemonDetailViewController.swift */; };
+		B5C4D48D2C5CA136007A4D3C /* PokemonDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D48C2C5CA136007A4D3C /* PokemonDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
