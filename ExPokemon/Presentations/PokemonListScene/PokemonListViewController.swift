@@ -13,6 +13,7 @@ final class PokemonListViewController: UIViewController {
     init(rootView: PokemonListView) {
         self.rootView = rootView
         super.init(nibName: nil, bundle: nil)
+        rootView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -29,3 +30,9 @@ final class PokemonListViewController: UIViewController {
     }
 }
 
+extension PokemonListViewController: PokemonListViewDelegate {
+    func cooridinateVC(with index: Int) {
+        let vc = PokemonDetailViewController(nibName: nil, bundle: nil)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+}
