@@ -9,9 +9,12 @@ import UIKit
 
 final class PokemonDetailViewController: UIViewController {
     private let rootView: PokemonDetailView
-    
-    init(rootView: PokemonDetailView) {
+    private let pokemonID: Int
+    private let networkService: NetworkService
+    init(rootView: PokemonDetailView, pokemonID: Int, networkService: NetworkService) {
         self.rootView = rootView
+        self.pokemonID = pokemonID
+        self.networkService = networkService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -26,5 +29,14 @@ final class PokemonDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let endpoint = APIEndpoints.getPokemonDetail(with: pokemonID)
+        networkService.request(with: endpoint) { result in
+            switch result {
+            case .success(let pokemon):
+                self.rootView.setPokemonInfo(pokemon.toDomain())
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
 }

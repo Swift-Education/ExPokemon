@@ -7,11 +7,6 @@
 
 import UIKit
 
-struct Pokemon {
-    let name: String
-    let info: [String: String]
-}
-
 final class PokemonDetailView: UIView {
     private var pokemon: Pokemon!
     
@@ -26,8 +21,9 @@ final class PokemonDetailView: UIView {
     
     public func setPokemonInfo(_ info: Pokemon) {
         pokemon = info
-        layout()
-        layoutIfNeeded()
+        DispatchQueue.main.async {
+            self.layout()
+        }
     }
 }
 
@@ -40,22 +36,39 @@ extension PokemonDetailView {
             stackview.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             stackview.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             stackview.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            stackview.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20),
         ])
+        self.layoutIfNeeded()
     }
     
     private func makeVerticalStackView(image: UIImage? = .pokemonBall) -> UIStackView {
         let stackview: UIStackView = .init()
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .vertical
-        stackview.addArrangedSubview(makeLogoImageView(image: image))
+        stackview.spacing = 10
+        stackview.distribution = .fillEqually
         
-        stackview.addArrangedSubview(
-            makeInfoLabel(text: pokemon.name, font: .boldSystemFont(ofSize: 40))
-        )
-        pokemon.info.forEach {
-            stackview.addArrangedSubview(
-                makeInfoLabel(text: "\($0): \($1))", font: .systemFont(ofSize: 20))
-            )
+        var imageView: UIImageView = makeLogoImageView(image: image)
+        stackview.addArrangedSubview(imageView)
+        NetworkManager.shared.fetch(urlString: pokemon.imageURL) { result in
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    imageView.image = UIImage(data: data!)
+                    self.layoutIfNeeded()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
+        [
+            makeInfoLabel(text: pokemon.title, font: .boldSystemFont(ofSize: 40)),
+            makeInfoLabel(text: "type: \(pokemon.type)", font: .systemFont(ofSize: 20)),
+            makeInfoLabel(text: "height: \(pokemon.height)", font: .systemFont(ofSize: 20)),
+            makeInfoLabel(text: "weight: \(pokemon.weight)", font: .systemFont(ofSize: 20))
+        ].forEach {
+            stackview.addArrangedSubview($0)
         }
         return stackview
     }
