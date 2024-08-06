@@ -21,6 +21,7 @@ final class PokemonListView: UIView {
         return collectionView
     }()
     
+    private var datasource: UICollectionViewDiffableDataSource<Section, Item>!
     weak var delegate: PokemonListViewDelegate?
     
     override init(frame: CGRect) {
@@ -62,26 +63,48 @@ extension PokemonListView {
     }
     
     private func configureCollectionView() {
-        collectionView.dataSource = self
+        datasource = makeDatasource()
         collectionView.delegate = self
         collectionView.contentInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        collectionView.register(PokemonListCell.self, forCellWithReuseIdentifier: PokemonListCell.reuseIdentifier)
-        collectionView.reloadData()
+        makeSnapshot(item: Item.stub1)
     }
 }
 
-extension PokemonListView: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+extension PokemonListView {
+    fileprivate enum Section {
+        case pokemon
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonListCell.reuseIdentifier, for: indexPath)
-        guard let convertedCell = cell as? PokemonListCell else { return cell }
-        convertedCell.configureCell(index: indexPath.item + 1)
-        return convertedCell
+    fileprivate struct Item: Hashable {
+        let id: Int
+        
+        static let stub1: [Item] = {
+            return stride(from: 1, through: 20, by: 1).map { Item(id: $0)}
+        }()
     }
     
+    private func makeDatasource() -> UICollectionViewDiffableDataSource<Section, Item> {
+        let cellResistration = UICollectionView.CellRegistration<PokemonListCell, Item> {cell,indexPath,itemIdentifier in
+            cell.configureCell(index: itemIdentifier.id)
+        }
+        
+        let datasource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+            return collectionView.dequeueConfiguredReusableCell(using: cellResistration, for: indexPath, item: itemIdentifier)
+        }
+        
+        
+        return datasource
+    }
+    
+    private func makeSnapshot(item: [Item]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections([.pokemon])
+        snapshot.appendItems(item)
+        datasource.apply(snapshot)
+    }
+}
+
+extension PokemonListView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.cooridinateVC(with: indexPath.item + 1)
     }
