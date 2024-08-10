@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Pokemon {
+struct PokemonDetail {
     let imageURL: String
     let title: String
     let type: String

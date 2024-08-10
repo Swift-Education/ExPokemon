@@ -14,6 +14,16 @@ struct APIEndpoints {
             queryParameters: [:]
         )
     }
+    
+    static func getPokemonList(offset: Int = 0, limit: Int = 20) -> Endpoint<PokemonList> {
+        return Endpoint(
+            path: "pokemon/",
+            queryParameters: [
+                "offset" : offset,
+                "limit" : limit,
+            ]
+        )
+    }
 }
 
 

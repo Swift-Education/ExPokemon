@@ -7,6 +7,34 @@
 
 import Foundation
 
+protocol Pagingable: Encodable {
+    var offset: Int { get }
+    var limit: Int { get }
+}
+
+struct Paging: Pagingable {
+    let offset: Int
+    let limit: Int
+}
+
+struct PokemonList: Decodable {
+    let results: [Pokemon]
+}
+
+struct Pokemon: Decodable, Hashable {
+    let name: String
+    let url: String
+    
+    var thumbnailImageURL: String {
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png"
+    }
+    
+    var id: Int {
+        let components = url.split(separator: "/")
+        return Int(components.last ?? "0") ?? 0
+    }
+}
+
 struct PokemonResponseDTO: Decodable {
     let id: Int
     let name: String
@@ -24,8 +52,8 @@ struct PokemonResponseDTO: Decodable {
         case weight
     }
     
-    func toDomain() -> Pokemon {
-        return Pokemon(
+    func toDomain() -> PokemonDetail {
+        return PokemonDetail(
             imageURL: sprites.frontDefault,
             title: "No.\(id) \(name)",
             type: types.first?.type.name ?? "None",
@@ -48,7 +76,24 @@ struct Species: Decodable {
 }
 
 // MARK: - Sprites
-class Sprites: Decodable {
+struct Sprites: Decodable {
+    let frontDefault: String
+    let other: Other
+    enum CodingKeys: String, CodingKey {
+        case frontDefault = "front_default"
+        case other
+    }
+}
+
+struct Other: Codable {
+    let officialArtwork: OfficialArtwork
+
+    enum CodingKeys: String, CodingKey {
+        case officialArtwork = "official-artwork"
+    }
+}
+
+struct OfficialArtwork: Codable {
     let frontDefault: String
 
     enum CodingKeys: String, CodingKey {

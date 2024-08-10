@@ -46,22 +46,6 @@ final class NetworkManager {
     }
 }
 
-
-//extension NetworkManager: NetworkService {
-//    func request(
-//        endpoint: Requestable,
-//        completion: @escaping CompletionHandler
-//    ) -> URLSessionDataTask? {
-//        do {
-//            let urlRequest = try endpoint.urlRequest(with: config)
-//            return request(request: urlRequest, completion: completion)
-//        } catch {
-//            completion(.failure(.urlGeneration))
-//            return nil
-//        }
-//    }
-//}
-
 protocol NetworkService {
     typealias CompletionHandler<T> = (Result<T, Error>) -> Void
     
@@ -93,7 +77,10 @@ extension NetworkManager: NetworkService {
                     T.self,
                     from: data
                 )
-            else { return }
+            else {
+                completion(.failure(NSError(domain: "failed decode", code: -1)))
+                return
+            }
             print(userInfo)
             completion(.success(userInfo))
         }
