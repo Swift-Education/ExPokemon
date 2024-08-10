@@ -11,6 +11,10 @@ protocol ViewCoordianateAbleWithIndex {
     func cooridinateVC(with index: Int)
 }
 
+protocol CollectionViewInfinityScollable {
+    func update()
+}
+
 protocol PokemonListViewDelegate: ViewCoordianateAbleWithIndex, AnyObject {}
 
 final class PokemonListView: UIView {
@@ -21,7 +25,13 @@ final class PokemonListView: UIView {
         return collectionView
     }()
     
-    private var datasource: UICollectionViewDiffableDataSource<Section, Item>!
+    private var model: PokemonList = .init(results: []) {
+        didSet {
+            makeSnapshot()
+        }
+    }
+    private typealias DataSource = UICollectionViewDiffableDataSource<Section, Pokemon>
+    private var datasource: DataSource!
     weak var delegate: PokemonListViewDelegate?
     
     override init(frame: CGRect) {
@@ -33,6 +43,10 @@ final class PokemonListView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func configure(model: PokemonList) {
+        self.model = model
     }
 }
 
@@ -66,7 +80,6 @@ extension PokemonListView {
         datasource = makeDatasource()
         collectionView.delegate = self
         collectionView.contentInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        makeSnapshot(item: Item.stub1)
     }
 }
 
@@ -75,20 +88,12 @@ extension PokemonListView {
         case pokemon
     }
     
-    fileprivate struct Item: Hashable {
-        let id: Int
-        
-        static let stub1: [Item] = {
-            return stride(from: 1, through: 20, by: 1).map { Item(id: $0)}
-        }()
-    }
-    
-    private func makeDatasource() -> UICollectionViewDiffableDataSource<Section, Item> {
-        let cellResistration = UICollectionView.CellRegistration<PokemonListCell, Item> {cell,indexPath,itemIdentifier in
-            cell.configureCell(index: itemIdentifier.id)
+    private func makeDatasource() -> DataSource {
+        let cellResistration = UICollectionView.CellRegistration<PokemonListCell, Pokemon> {cell,indexPath,itemIdentifier in
+            cell.configureCell(urlString: itemIdentifier.thumbnailImageURL)
         }
         
-        let datasource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+        let datasource = DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
             return collectionView.dequeueConfiguredReusableCell(using: cellResistration, for: indexPath, item: itemIdentifier)
         }
         
@@ -96,10 +101,10 @@ extension PokemonListView {
         return datasource
     }
     
-    private func makeSnapshot(item: [Item]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+    private func makeSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Pokemon>()
         snapshot.appendSections([.pokemon])
-        snapshot.appendItems(item)
+        snapshot.appendItems(model.results)
         datasource.apply(snapshot)
     }
 }
@@ -114,5 +119,18 @@ extension PokemonListView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width / 3 - 10
         return CGSize(width: width, height: width)
+    }
+}
+
+extension PokemonListView: UIScrollViewDelegate {
+    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+
+        if offsetY > contentHeight - height {
+//            viewModel.fetchPokeInfomation()
+            print("scrollView.contentOffset.y: \(scrollView.contentOffset.y)")
+        }
     }
 }

@@ -19,7 +19,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = UINavigationController(
-            rootViewController: PokemonListViewController(rootView: PokemonListView(frame: .zero))
+            rootViewController: PokemonListViewController(
+                model: PokemonListModel(networkService: NetworkManager.shared),
+                rootView: PokemonListView(frame: .zero)
+            )
         )
         window?.makeKeyAndVisible()
     }

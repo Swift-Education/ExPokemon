@@ -8,7 +8,7 @@
 import UIKit
 
 final class PokemonDetailView: UIView {
-    private var pokemon: Pokemon!
+    private var pokemon: PokemonDetail!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -19,7 +19,7 @@ final class PokemonDetailView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func setPokemonInfo(_ info: Pokemon) {
+    public func setPokemonInfo(_ info: PokemonDetail) {
         pokemon = info
         DispatchQueue.main.async {
             self.layout()

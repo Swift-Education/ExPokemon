@@ -8,9 +8,11 @@
 import UIKit
 
 final class PokemonListViewController: UIViewController {
+    private let model: PokemonListModel
     private let rootView: PokemonListView
     
-    init(rootView: PokemonListView) {
+    init(model: PokemonListModel, rootView: PokemonListView) {
+        self.model = model
         self.rootView = rootView
         super.init(nibName: nil, bundle: nil)
         rootView.delegate = self
@@ -27,6 +29,10 @@ final class PokemonListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        model.fetchPokemonList { list in
+            guard let list = list else { return }
+            self.rootView.configure(model: list)
+        }
     }
 }
 
