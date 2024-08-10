@@ -17,7 +17,7 @@ final class PokemonListView: UIView {
     private let collectionView: UICollectionView = {
         let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout.init())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .red
+        collectionView.backgroundColor = PokeColor.detailBackgroundColor
         return collectionView
     }()
     

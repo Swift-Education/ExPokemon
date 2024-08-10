@@ -12,7 +12,7 @@ final class PokemonDetailView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .systemRed
+        backgroundColor = PokeColor.pokeBackgroundColor
     }
     
     required init?(coder: NSCoder) {
@@ -29,38 +29,63 @@ final class PokemonDetailView: UIView {
 
 extension PokemonDetailView {
     private func layout() {
+        let containerView: UIView = {
+            let view: UIView = .init(frame: .zero)
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = PokeColor.detailBackgroundColor
+            return view
+        }()
+        let imageView: UIImageView = makeLogoImageView()
         let stackview: UIStackView = makeVerticalStackView()
-        addSubview(stackview)
+        addSubview(containerView)
+        containerView.addSubview(imageView)
+        containerView.addSubview(stackview)
         
         NSLayoutConstraint.activate([
-            stackview.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            stackview.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            stackview.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            stackview.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            containerView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
+            containerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            containerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            containerView.heightAnchor.constraint(equalTo: safeAreaLayoutGuide.heightAnchor, multiplier: 1/2),
+            
+            imageView.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor, constant: 20),
+            imageView.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            imageView.trailingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            imageView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.45),
+            
+            stackview.topAnchor.constraint(greaterThanOrEqualTo: imageView.bottomAnchor, constant: 10),
+            stackview.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            stackview.trailingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            stackview.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20),
         ])
+        
         self.layoutIfNeeded()
+    }
+    
+    private func makeLogoImageView(image: UIImage? = .pokemonBall) -> UIImageView {
+        let imageView: UIImageView = .init(image: image)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        
+        NetworkManager.shared.fetch(urlString: pokemon.imageURL) { result in
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    imageView.image = UIImage(data: data!)
+                    imageView.layoutIfNeeded()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
+        return imageView
     }
     
     private func makeVerticalStackView(image: UIImage? = .pokemonBall) -> UIStackView {
         let stackview: UIStackView = .init()
         stackview.translatesAutoresizingMaskIntoConstraints = false
         stackview.axis = .vertical
-        stackview.spacing = 10
         stackview.distribution = .fillEqually
-        
-        var imageView: UIImageView = makeLogoImageView(image: image)
-        stackview.addArrangedSubview(imageView)
-        NetworkManager.shared.fetch(urlString: pokemon.imageURL) { result in
-            switch result {
-            case .success(let data):
-                DispatchQueue.main.async {
-                    imageView.image = UIImage(data: data!)
-                    self.layoutIfNeeded()
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
         
         [
             makeInfoLabel(text: pokemon.title, font: .boldSystemFont(ofSize: 40)),
@@ -73,19 +98,13 @@ extension PokemonDetailView {
         return stackview
     }
     
-    private func makeLogoImageView(image: UIImage? = .pokemonBall) -> UIImageView {
-        let imageView: UIImageView = .init(image: image)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }
-    
     private func makeInfoLabel(text: String, font: UIFont = .systemFont(ofSize: 20)) -> UILabel {
         let label: UILabel = .init(frame: .zero)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.text = text
         label.font = font
+        label.textColor = .white
         return label
     }
 }
