@@ -12,10 +12,10 @@ protocol ViewCoordianateAbleWithIndex {
 }
 
 protocol CollectionViewInfinityScollable {
-    func update()
+    func update(current offset: Int)
 }
 
-protocol PokemonListViewDelegate: ViewCoordianateAbleWithIndex, AnyObject {}
+protocol PokemonListViewDelegate: ViewCoordianateAbleWithIndex, CollectionViewInfinityScollable, AnyObject {}
 
 final class PokemonListView: UIView {
     private let collectionView: UICollectionView = {
@@ -25,11 +25,12 @@ final class PokemonListView: UIView {
         return collectionView
     }()
     
-    private var model: PokemonList = .init(results: []) {
+    private var model: [Pokemon] = [] {
         didSet {
             makeSnapshot()
         }
     }
+    
     private typealias DataSource = UICollectionViewDiffableDataSource<Section, Pokemon>
     private var datasource: DataSource!
     weak var delegate: PokemonListViewDelegate?
@@ -45,7 +46,7 @@ final class PokemonListView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(model: PokemonList) {
+    public func configure(model: [Pokemon]) {
         self.model = model
     }
 }
@@ -104,7 +105,7 @@ extension PokemonListView {
     private func makeSnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Pokemon>()
         snapshot.appendSections([.pokemon])
-        snapshot.appendItems(model.results)
+        snapshot.appendItems(model)
         datasource.apply(snapshot)
     }
 }
@@ -129,7 +130,7 @@ extension PokemonListView: UIScrollViewDelegate {
         let height = scrollView.frame.size.height
 
         if offsetY > contentHeight - height {
-//            viewModel.fetchPokeInfomation()
+            delegate?.update(current: model.count)
             print("scrollView.contentOffset.y: \(scrollView.contentOffset.y)")
         }
     }

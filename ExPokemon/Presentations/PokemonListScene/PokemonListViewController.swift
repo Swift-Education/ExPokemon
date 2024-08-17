@@ -45,4 +45,11 @@ extension PokemonListViewController: PokemonListViewDelegate {
         )
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    func update(current: Int) {
+        model.fetchPokemonList(offset: current) { list in
+            guard let list = list else { return }
+            self.rootView.configure(model: list)
+        }
+    }
 }

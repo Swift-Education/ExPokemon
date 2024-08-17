@@ -9,17 +9,19 @@ import Foundation
 
 final class PokemonListModel {
     private let networkService: NetworkService
+    private var pokemonList: [Pokemon] = []
     
     init(networkService: NetworkService) {
         self.networkService = networkService
     }
     
-    func fetchPokemonList(offset: Int = 0, limit: Int = 20, completion: @escaping ((PokemonList?) -> Void)) {
-        let endpoint = APIEndpoints.getPokemonList(offset: offset, limit: limit)
+    func fetchPokemonList(offset: Int = 0, completion: @escaping (([Pokemon]?) -> Void)) {
+        let endpoint = APIEndpoints.getPokemonList(offset: pokemonList.count)
         networkService.request(with: endpoint) { result in
             switch result {
             case .success(let list):
-                completion(list)
+                self.pokemonList += list.results
+                completion(self.pokemonList)
             case .failure(let error):
                 print(error.localizedDescription)
                 completion(nil)

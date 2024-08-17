@@ -24,4 +24,21 @@ extension UIImageView {
         }
         task.resume()
     }
+    
+    func cancelDownloadTask() {
+        currentTask?.cancel()
+    }
+}
+
+extension UIImageView {
+    private static var taskKey = 0
+    
+    private var currentTask: URLSessionDataTask? {
+        get {
+            return objc_getAssociatedObject(self, &UIImageView.taskKey) as? URLSessionDataTask
+        }
+        set {
+            objc_setAssociatedObject(self, &UIImageView.taskKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
 }

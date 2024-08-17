@@ -15,7 +15,7 @@ struct APIEndpoints {
         )
     }
     
-    static func getPokemonList(offset: Int = 0, limit: Int = 20) -> Endpoint<PokemonList> {
+    static func getPokemonList(offset: Int = 0, limit: Int = NetworkManager.limit) -> Endpoint<PokemonList> {
         return Endpoint(
             path: "pokemon/",
             queryParameters: [

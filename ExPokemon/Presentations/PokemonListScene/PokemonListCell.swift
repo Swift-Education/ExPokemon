@@ -39,4 +39,9 @@ final class PokemonListCell: UICollectionViewCell {
     public func configureCell(urlString: String) {
         self.imageView.fetchImage(urlString: urlString)
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.imageView.cancelDownloadTask()
+    }
 }

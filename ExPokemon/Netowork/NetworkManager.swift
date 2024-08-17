@@ -8,6 +8,7 @@
 import Foundation
 
 final class NetworkManager {
+    static let limit: Int = 20
     static let shared: NetworkManager = .init(
         session: .shared,
         config: APINetworkConfig(
@@ -49,12 +50,12 @@ final class NetworkManager {
 protocol NetworkService {
     typealias CompletionHandler<T> = (Result<T, Error>) -> Void
     
-    @discardableResult
     func request<T: Decodable, E: ResponseRequestable>(
         with endpoint: E,
         completion: @escaping CompletionHandler<T>
     ) where E.Response == T
 }
+
 extension NetworkManager: NetworkService {
     func request<T: Decodable, E: ResponseRequestable>(with endpoint: E, completion: @escaping CompletionHandler<T>) where T == E.Response {
         guard let url = try? endpoint.url(with: config) else { return }
