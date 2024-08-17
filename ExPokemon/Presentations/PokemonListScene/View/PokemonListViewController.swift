@@ -8,12 +8,12 @@
 import UIKit
 
 final class PokemonListViewController: UIViewController {
-    private let model: PokemonListModel
     private let rootView: PokemonListView
+    private let viewModel: PokemonListViewModel
     
-    init(model: PokemonListModel, rootView: PokemonListView) {
-        self.model = model
+    init(rootView: PokemonListView, viewModel: PokemonListViewModel) {
         self.rootView = rootView
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         rootView.delegate = self
     }
@@ -29,7 +29,7 @@ final class PokemonListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        model.fetchPokemonList { list in
+        viewModel.fetchPokemonList { list in
             guard let list = list else { return }
             self.rootView.configure(model: list)
         }
@@ -47,7 +47,7 @@ extension PokemonListViewController: PokemonListViewDelegate {
     }
     
     func update(current: Int) {
-        model.fetchPokemonList(offset: current) { list in
+        viewModel.fetchPokemonList(offset: current) { list in
             guard let list = list else { return }
             self.rootView.configure(model: list)
         }

@@ -101,6 +101,16 @@
 			path = ExPokemon;
 			sourceTree = "<group>";
 		};
+		B566329E2C70FAD800AD85A1 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B5C4D4852C5C86AB007A4D3C /* PokemonListCell.swift */,
+				B51933B62C5C7CA0001B3D26 /* PokemonListViewController.swift */,
+				B5C4D4832C5C808A007A4D3C /* PokemonListView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		B5717BD62C67824D00EC1986 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -132,10 +142,8 @@
 		B5C4D4822C5C805F007A4D3C /* PokemonListScene */ = {
 			isa = PBXGroup;
 			children = (
-				B51933B62C5C7CA0001B3D26 /* PokemonListViewController.swift */,
-				B5C4D4832C5C808A007A4D3C /* PokemonListView.swift */,
-				B5C4D4852C5C86AB007A4D3C /* PokemonListCell.swift */,
 				B5717BD22C677E8E00EC1986 /* PokemonListModel.swift */,
+				B566329E2C70FAD800AD85A1 /* View */,
 				B566329C2C70E92100AD85A1 /* PokemonListViewModel.swift */,
 			);
 			path = PokemonListScene;
