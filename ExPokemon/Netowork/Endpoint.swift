@@ -58,10 +58,10 @@ protocol Requestable {
 
 
 extension Requestable {
-    func url(with config: NetworkConfigurable) throws -> URL {
-        let baseURL = config.baseURL.absoluteString.last != "/"
-        ? config.baseURL.absoluteString + "/"
-        : config.baseURL.absoluteString
+    func url() throws -> URL {
+        let baseURL = baseURL.last != "/"
+        ? baseURL + "/"
+        : baseURL
         let endpoint = isFullPath ? path : baseURL.appending(path)
         
         guard var urlComponents = URLComponents(
@@ -69,16 +69,16 @@ extension Requestable {
         ) else { throw RequestGenerationError.components }
         var urlQueryItems = [URLQueryItem]()
 
-        config.queryParameters.forEach {
-            urlQueryItems.append(URLQueryItem(name: $0.key, value: $0.value))
+        queryParameters.forEach {
+            urlQueryItems.append(URLQueryItem(name: $0.key, value: "\($0.value)"))
         }
         urlComponents.queryItems = !urlQueryItems.isEmpty ? urlQueryItems : nil
         guard let url = urlComponents.url else { throw RequestGenerationError.components }
         return url
     }
     
-    func createRequest(with config: NetworkConfigurable) throws -> URLRequest {
-        let url = try self.url(with: config)
+    func createRequest() throws -> URLRequest {
+        let url = try self.url()
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = headerParameters

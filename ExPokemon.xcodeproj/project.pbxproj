@@ -28,7 +28,6 @@
 		B5C4D48F2C5CAF22007A4D3C /* PokemonResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D48E2C5CAF22007A4D3C /* PokemonResponseDTO.swift */; };
 		B5C4D4912C5CC31A007A4D3C /* APIEnpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4902C5CC31A007A4D3C /* APIEnpoint.swift */; };
 		B5C4D4932C5CC432007A4D3C /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4922C5CC432007A4D3C /* Endpoint.swift */; };
-		B5C4D4982C5CCA66007A4D3C /* APINetworkConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D4972C5CCA66007A4D3C /* APINetworkConfig.swift */; };
 		B5C4D49D2C5CD047007A4D3C /* Pokemon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C4D49C2C5CD047007A4D3C /* Pokemon.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +51,6 @@
 		B5C4D48E2C5CAF22007A4D3C /* PokemonResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonResponseDTO.swift; sourceTree = "<group>"; };
 		B5C4D4902C5CC31A007A4D3C /* APIEnpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEnpoint.swift; sourceTree = "<group>"; };
 		B5C4D4922C5CC432007A4D3C /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
-		B5C4D4972C5CCA66007A4D3C /* APINetworkConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APINetworkConfig.swift; sourceTree = "<group>"; };
 		B5C4D49C2C5CD047007A4D3C /* Pokemon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pokemon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -165,7 +163,6 @@
 				B5C4D4992C5CD012007A4D3C /* DataMapping */,
 				B5C4D4902C5CC31A007A4D3C /* APIEnpoint.swift */,
 				B5C4D4922C5CC432007A4D3C /* Endpoint.swift */,
-				B5C4D4972C5CCA66007A4D3C /* APINetworkConfig.swift */,
 			);
 			path = Netowork;
 			sourceTree = "<group>";
@@ -278,7 +275,6 @@
 				B5C4D48D2C5CA136007A4D3C /* PokemonDetailView.swift in Sources */,
 				B5717BD32C677E8E00EC1986 /* PokemonListModel.swift in Sources */,
 				B5717BD52C6780DB00EC1986 /* UIImageView+.swift in Sources */,
-				B5C4D4982C5CCA66007A4D3C /* APINetworkConfig.swift in Sources */,
 				B5C4D4842C5C808A007A4D3C /* PokemonListView.swift in Sources */,
 				B5C4D4912C5CC31A007A4D3C /* APIEnpoint.swift in Sources */,
 				B5C4D48A2C5CA10A007A4D3C /* PokemonDetailViewController.swift in Sources */,

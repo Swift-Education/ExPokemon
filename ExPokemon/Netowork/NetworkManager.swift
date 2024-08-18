@@ -8,33 +8,26 @@
 import Foundation
 import RxSwift
 
-final class NetworkManager {
-    static let limit: Int = 20
-    static let shared: NetworkManager = .init(
-        session: .shared,
-        config: APINetworkConfig(
-            baseURL: URL(string: "https://pokeapi.co/api/v2/")!
-        )
-    )
-    
-    private let session: URLSession
-    private let config: NetworkConfigurable
-    static let baseURL: String = "https://pokeapi.co/api/v2/"
-    
-    init(session: URLSession, config: NetworkConfigurable) {
-        self.session = session
-        self.config = config
-    }
-}
-
 protocol NetworkService {
     func request<T: Decodable, E: ResponseRequestable>(with endpoint: E) -> Single<T> where T == E.Response
+}
+
+final class NetworkManager {
+    static let limit: Int = 21
+    static let shared: NetworkManager = .init(session: .shared)
+    
+    private let session: URLSession
+    
+    init(session: URLSession) {
+        self.session = session
+    }
 }
 
 extension NetworkManager: NetworkService {
     func request<T: Decodable, E: ResponseRequestable>(with endpoint: E) -> Single<T> where T == E.Response {
         do {
-            let urlRequest = try endpoint.createRequest(with: config)
+            let urlRequest = try endpoint.createRequest()
+            print("url: \(urlRequest.url!.absoluteString)")
             return Single.create { single in
                 let dataTask = self.session.dataTask(with: urlRequest) { data, response, error in
                     if let error = error {
@@ -62,7 +55,9 @@ extension NetworkManager: NetworkService {
                     single(.success(userInfo))
                 }
                 dataTask.resume()
-                return Disposables.create()
+                return Disposables.create {
+                    dataTask.cancel()
+                }
             }
         } catch let error {
             return Single.create { single in
