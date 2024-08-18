@@ -19,6 +19,7 @@ class Endpoint<R>: ResponseRequestable {
     let queryParameters: [String: Any]
     let bodyParameters: [String: Any]
     let responseDecoder: ResponseDecoder
+    let logger: NetworkLoggerInterface
     
     init(baseURL: String = "https://pokeapi.co/api/v2",
          path: String,
@@ -29,7 +30,9 @@ class Endpoint<R>: ResponseRequestable {
          queryParameters: [String: Any] = [:],
          bodyParametersEncodable: Encodable? = nil,
          bodyParameters: [String: Any] = [:],
-         responseDecoder: ResponseDecoder = JSONResponseDecoder()) {
+         responseDecoder: ResponseDecoder = JSONResponseDecoder(),
+         logger: NetworkLoggerInterface = NetworkLogger()
+    ) {
         self.baseURL = baseURL
         self.path = path
         self.isFullPath = isFullPath
@@ -38,5 +41,6 @@ class Endpoint<R>: ResponseRequestable {
         self.queryParameters = queryParameters
         self.bodyParameters = bodyParameters
         self.responseDecoder = responseDecoder
+        self.logger = logger
     }
 }

@@ -15,6 +15,7 @@ protocol Requestable {
     var headerParameters: [String: String] { get }
     var queryParameters: [String: Any] { get }
     var bodyParameters: [String: Any] { get }
+    var logger: NetworkLoggerInterface { get }
 }
 
 extension Requestable {

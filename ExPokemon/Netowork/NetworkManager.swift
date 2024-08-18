@@ -86,7 +86,7 @@ extension NetworkManager: NetworkService {
                     from: data
                 )
             else { return }
-            print(userInfo)
+            endpoint.logger.responseLogger(response: response, data: data)
             completion(.success(userInfo))
         }
         dataTask.resume()
