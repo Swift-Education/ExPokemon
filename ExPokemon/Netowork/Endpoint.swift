@@ -20,6 +20,7 @@ class Endpoint<R>: ResponseRequestable {
     
     typealias Response = R
     
+    let baseURL: String
     let path: String
     let isFullPath: Bool
     let method: HTTPMethodType
@@ -28,7 +29,8 @@ class Endpoint<R>: ResponseRequestable {
     let bodyParameters: [String: Any]
     let responseDecoder: ResponseDecoder
     
-    init(path: String,
+    init(baseURL: String = "https://pokeapi.co/api/v2",
+         path: String,
          isFullPath: Bool = false,
          method: HTTPMethodType = .get,
          headerParameters: [String: String] = [:],
@@ -37,6 +39,7 @@ class Endpoint<R>: ResponseRequestable {
          bodyParametersEncodable: Encodable? = nil,
          bodyParameters: [String: Any] = [:],
          responseDecoder: ResponseDecoder = JSONResponseDecoder()) {
+        self.baseURL = baseURL
         self.path = path
         self.isFullPath = isFullPath
         self.method = method
@@ -48,6 +51,7 @@ class Endpoint<R>: ResponseRequestable {
 }
 
 protocol Requestable {
+    var baseURL: String { get }
     var path: String { get }
     var isFullPath: Bool { get }
     var method: HTTPMethodType { get }
