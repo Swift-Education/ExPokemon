@@ -27,7 +27,6 @@ extension NetworkManager: NetworkService {
     func request<T: Decodable, E: ResponseRequestable>(with endpoint: E) -> Single<T> where T == E.Response {
         do {
             let urlRequest = try endpoint.createRequest()
-            print("url: \(urlRequest.url!.absoluteString)")
             return Single.create { single in
                 let dataTask = self.session.dataTask(with: urlRequest) { data, response, error in
                     if let error = error {
@@ -42,6 +41,8 @@ extension NetworkManager: NetworkService {
                         return
                     }
                     
+                    endpoint.logger.responseLogger(response: response, data: data)
+                    
                     guard
                         let userInfo: T = try? JSONDecoder().decode(
                             T.self,
@@ -51,7 +52,6 @@ extension NetworkManager: NetworkService {
                         single(.failure(NSError(domain: "failed decode", code: -1)))
                         return
                     }
-                    print(userInfo)
                     single(.success(userInfo))
                 }
                 dataTask.resume()

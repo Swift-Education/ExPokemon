@@ -15,6 +15,7 @@ protocol Requestable {
     var headerParameters: [String: String] { get }
     var queryParameters: [String: Any] { get }
     var bodyParameters: [String: Any] { get }
+    var logger: NetworkLoggerInterface { get }
 }
 
 extension Requestable {
@@ -46,6 +47,8 @@ extension Requestable {
             let body = try? JSONSerialization.data(withJSONObject: bodyParameters)
             request.httpBody = body
         }
+        
+        logger.requestLogger(request: request)
         
         return request
     }
