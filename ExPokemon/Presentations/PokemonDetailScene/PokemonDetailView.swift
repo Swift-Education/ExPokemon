@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 final class PokemonDetailView: UIView {
     private var pokemon: PokemonDetail!
@@ -66,18 +67,7 @@ extension PokemonDetailView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         
-        NetworkManager.shared.fetch(urlString: pokemon.imageURL) { result in
-            switch result {
-            case .success(let data):
-                DispatchQueue.main.async {
-                    imageView.image = UIImage(data: data!)
-                    imageView.layoutIfNeeded()
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
-        
+        imageView.fetch(with: pokemon.imageURL)
         return imageView
     }
     

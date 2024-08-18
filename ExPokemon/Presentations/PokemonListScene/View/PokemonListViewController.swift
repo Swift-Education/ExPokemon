@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import RxSwift
 
 final class PokemonListViewController: UIViewController {
     private let rootView: PokemonListView
     private let viewModel: PokemonListViewModel
+    private let disposeBag: DisposeBag = .init()
     
     init(rootView: PokemonListView, viewModel: PokemonListViewModel) {
         self.rootView = rootView
@@ -29,10 +31,14 @@ final class PokemonListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.fetchPokemonList { list in
-            guard let list = list else { return }
-            self.rootView.configure(model: list)
-        }
+        bind()
+    }
+    
+    private func bind() {
+        viewModel.fetchPokemonList()
+            .subscribe(onNext: { list in
+                self.rootView.configure(model: list ?? [])
+            }).disposed(by: disposeBag)
     }
 }
 
@@ -47,9 +53,9 @@ extension PokemonListViewController: PokemonListViewDelegate {
     }
     
     func update(current: Int) {
-        viewModel.fetchPokemonList(offset: current) { list in
-            guard let list = list else { return }
-            self.rootView.configure(model: list)
-        }
+        viewModel.fetchPokemonList(offset: current)
+            .subscribe(onNext: { list in
+                self.rootView.configure(model: list ?? [])
+            }).disposed(by: disposeBag)
     }
 }

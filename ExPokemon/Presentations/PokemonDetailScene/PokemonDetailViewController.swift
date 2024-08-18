@@ -6,11 +6,14 @@
 //
 
 import UIKit
+import RxSwift
 
 final class PokemonDetailViewController: UIViewController {
     private let rootView: PokemonDetailView
     private let pokemonID: Int
     private let networkService: NetworkService
+    private let disposeBag: DisposeBag = .init()
+    
     init(rootView: PokemonDetailView, pokemonID: Int, networkService: NetworkService) {
         self.rootView = rootView
         self.pokemonID = pokemonID
@@ -30,13 +33,11 @@ final class PokemonDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let endpoint = APIEndpoints.getPokemonDetail(with: pokemonID)
-        networkService.request(with: endpoint) { result in
-            switch result {
-            case .success(let pokemon):
-                self.rootView.setPokemonInfo(pokemon.toDomain())
-            case .failure(let error):
+        networkService.request(with: endpoint)
+            .subscribe { result in
+                self.rootView.setPokemonInfo(result.toDomain())
+            } onFailure: { error in
                 print(error.localizedDescription)
-            }
-        }
+            }.disposed(by: disposeBag)
     }
 }

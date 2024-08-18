@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import RxSwift
 
 final class PokemonListModel {
     private let networkService: NetworkService
     private var pokemonList: [Pokemon] = []
+    private let disposeBag: DisposeBag = .init()
     
     init(networkService: NetworkService) {
         self.networkService = networkService
@@ -17,15 +19,13 @@ final class PokemonListModel {
     
     func fetchPokemonList(offset: Int = 0, completion: @escaping (([Pokemon]?) -> Void)) {
         let endpoint = APIEndpoints.getPokemonList(offset: pokemonList.count)
-        networkService.request(with: endpoint) { result in
-            switch result {
-            case .success(let list):
+        networkService.request(with: endpoint)
+            .subscribe { list in
                 self.pokemonList += list.results
                 completion(self.pokemonList)
-            case .failure(let error):
+            } onFailure: { error in
                 print(error.localizedDescription)
                 completion(nil)
-            }
-        }
+            }.disposed(by: disposeBag)
     }
 }
