@@ -7,15 +7,11 @@
 
 import UIKit
 
-protocol ViewCoordianateAbleWithIndex {
-    func cooridinateVC(with index: Int)
-}
-
 protocol CollectionViewInfinityScollable {
     func update(current offset: Int)
 }
 
-protocol PokemonListViewDelegate: ViewCoordianateAbleWithIndex, CollectionViewInfinityScollable, AnyObject {}
+protocol PokemonListViewDelegate: CollectionViewInfinityScollable, AnyObject {}
 
 final class PokemonListView: UIView {
     let collectionView: UICollectionView = {
@@ -82,13 +78,7 @@ extension PokemonListView {
     }
 }
 
-extension PokemonListView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.cooridinateVC(with: indexPath.item + 1)
-    }
-}
-
-extension PokemonListView: UICollectionViewDelegateFlowLayout {
+extension PokemonListView: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width / 3 - 10
         return CGSize(width: width, height: width)

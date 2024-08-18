@@ -10,6 +10,7 @@ import RxSwift
 
 final class PokemonDetailView: UIView {
     private var pokemon: PokemonDetail!
+    private let disposeBag: DisposeBag = .init()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -66,8 +67,11 @@ extension PokemonDetailView {
         let imageView: UIImageView = .init(image: image)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        
-        imageView.fetch(with: pokemon.imageURL)
+        guard let url = URL(string: pokemon.imageURL) else { return imageView }
+        imageView.rx.loadImage(url: url)
+            .observe(on: MainScheduler.instance)
+            .bind(to: imageView.rx.image)
+            .disposed(by: disposeBag)
         return imageView
     }
     

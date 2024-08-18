@@ -47,25 +47,21 @@ final class PokemonListViewController: UIViewController {
         rootView.collectionView.rx.modelSelected(Pokemon.self)
             .withUnretained(self)
             .subscribe { owner, pokemon in
-                pokemon.id
+                print(pokemon.id)
+                let vc = PokemonDetailViewController(
+                    rootView: PokemonDetailView(frame: .zero),
+                    viewModel: PokemonDetailViewModel(pokemonId: pokemon.id)
+                )
+                owner.navigationController?.pushViewController(vc, animated: true)
             }.disposed(by: disposeBag)
     }
 }
 
 extension PokemonListViewController: PokemonListViewDelegate {
-    func cooridinateVC(with index: Int) {
-        let vc = PokemonDetailViewController(
-            rootView: PokemonDetailView(frame: .zero),
-            pokemonID: index,
-            networkService: NetworkManager.shared
-        )
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
     func update(current: Int) {
-        viewModel.fetchPokemonList(offset: current)
-            .subscribe(onSuccess: { list in
-                self.rootView.update(model: list)
-            }).disposed(by: disposeBag)
+//        viewModel.fetchPokemonList(offset: current)
+//            .subscribe(onSuccess: { list in
+//                self.rootView.update(model: list)
+//            }).disposed(by: disposeBag)
     }
 }
