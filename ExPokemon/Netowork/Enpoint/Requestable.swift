@@ -1,54 +1,11 @@
 //
-//  Endpoint.swift
+//  Requestable.swift
 //  ExPokemon
 //
-//  Created by 강동영 on 8/2/24.
+//  Created by 강동영 on 8/18/24.
 //
 
 import Foundation
-
-enum HTTPMethodType: String {
-    case get     = "GET"
-    case head    = "HEAD"
-    case post    = "POST"
-    case put     = "PUT"
-    case patch   = "PATCH"
-    case delete  = "DELETE"
-}
-
-class Endpoint<R>: ResponseRequestable {
-    
-    typealias Response = R
-    
-    let baseURL: String
-    let path: String
-    let isFullPath: Bool
-    let method: HTTPMethodType
-    let headerParameters: [String: String]
-    let queryParameters: [String: Any]
-    let bodyParameters: [String: Any]
-    let responseDecoder: ResponseDecoder
-    
-    init(baseURL: String = "https://pokeapi.co/api/v2",
-         path: String,
-         isFullPath: Bool = false,
-         method: HTTPMethodType = .get,
-         headerParameters: [String: String] = [:],
-         queryParametersEncodable: Encodable? = nil,
-         queryParameters: [String: Any] = [:],
-         bodyParametersEncodable: Encodable? = nil,
-         bodyParameters: [String: Any] = [:],
-         responseDecoder: ResponseDecoder = JSONResponseDecoder()) {
-        self.baseURL = baseURL
-        self.path = path
-        self.isFullPath = isFullPath
-        self.method = method
-        self.headerParameters = headerParameters
-        self.queryParameters = queryParameters
-        self.bodyParameters = bodyParameters
-        self.responseDecoder = responseDecoder
-    }
-}
 
 protocol Requestable {
     var baseURL: String { get }
@@ -59,7 +16,6 @@ protocol Requestable {
     var queryParameters: [String: Any] { get }
     var bodyParameters: [String: Any] { get }
 }
-
 
 extension Requestable {
     func url() throws -> URL {
@@ -95,22 +51,19 @@ extension Requestable {
     }
 }
 
-protocol ResponseRequestable: Requestable {
-    associatedtype Response
-    
-    var responseDecoder: ResponseDecoder { get }
+// MARK: - HTTP Method Types
+enum HTTPMethodType: String {
+    case get     = "GET"
+    case head    = "HEAD"
+    case post    = "POST"
+    case put     = "PUT"
+    case patch   = "PATCH"
+    case delete  = "DELETE"
 }
 
-protocol ResponseDecoder {
-    func decode<T: Decodable>(_ data: Data) throws -> T
-}
-
-class JSONResponseDecoder: ResponseDecoder {
-    private let jsonDecoder = JSONDecoder()
-    init() { }
-    func decode<T: Decodable>(_ data: Data) throws -> T {
-        return try jsonDecoder.decode(T.self, from: data)
-    }
+// MARK: - Error
+enum RequestGenerationError: Error {
+    case components
 }
 
 private extension Dictionary {
@@ -127,8 +80,4 @@ private extension Encodable {
         let jsonData = try JSONSerialization.jsonObject(with: data)
         return jsonData as? [String : Any]
     }
-}
-
-enum RequestGenerationError: Error {
-    case components
 }
