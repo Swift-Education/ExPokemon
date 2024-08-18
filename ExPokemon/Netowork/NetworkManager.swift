@@ -8,20 +8,13 @@
 import Foundation
 
 final class NetworkManager {
-    static let shared: NetworkManager = .init(
-        session: .shared,
-        config: APINetworkConfig(
-            baseURL: URL(string: "https://pokeapi.co/api/v2/")!
-        )
-    )
+    static let shared: NetworkManager = .init(session: .shared)
+    
     typealias CompletionHandler<T> = (Result<T, Error>) -> Void
     private let session: URLSession
-    private let config: NetworkConfiguarble
-    static let baseURL: String = "https://pokeapi.co/api/v2/"
     
-    init(session: URLSession, config: NetworkConfiguarble) {
+    init(session: URLSession) {
         self.session = session
-        self.config = config
     }
     
     func fetch(urlString: String, completion: @escaping ((Result<Data?, Error>) -> Void)) {
@@ -65,7 +58,6 @@ final class NetworkManager {
 protocol NetworkService {
     typealias CompletionHandler<T> = (Result<T, Error>) -> Void
     
-    @discardableResult
     func request<T: Decodable, E: ResponseRequestable>(
         with endpoint: E,
         completion: @escaping CompletionHandler<T>
@@ -73,7 +65,7 @@ protocol NetworkService {
 }
 extension NetworkManager: NetworkService {
     func request<T: Decodable, E: ResponseRequestable>(with endpoint: E, completion: @escaping CompletionHandler<T>) where T == E.Response {
-        guard let url = try? endpoint.url(with: config) else { return }
+        guard let url = try? endpoint.url() else { return }
         let request = URLRequest(url: url)
         let dataTask = session.dataTask(with: request) { data, response, error in
             if let error = error {

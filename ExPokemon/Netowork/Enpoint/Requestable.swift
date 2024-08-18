@@ -8,22 +8,20 @@
 import Foundation
 
 protocol Requestable {
+    var baseURL: String { get }
     var path: String { get }
     var isFullPath: Bool { get }
     var method: HTTPMethodType { get }
     var headerParameters: [String: String] { get }
-    var queryParametersEncodable: Encodable? { get }
     var queryParameters: [String: Any] { get }
-    var bodyParametersEncodable: Encodable? { get }
     var bodyParameters: [String: Any] { get }
-    var bodyEncoder: BodyEncoder { get }
 }
 
 extension Requestable {
-    func url(with config: NetworkConfiguarble) throws -> URL {
-        let baseURL = config.baseURL.absoluteString.last != "/"
-        ? config.baseURL.absoluteString + "/"
-        : config.baseURL.absoluteString
+    func url() throws -> URL {
+        let baseURL = baseURL.last != "/"
+        ? baseURL + "/"
+        : baseURL
         let endpoint = isFullPath ? path : baseURL.appending(path)
         
         guard var urlComponents = URLComponents(
@@ -31,12 +29,8 @@ extension Requestable {
         ) else { throw RequestGenerationError.components }
         var urlQueryItems = [URLQueryItem]()
 
-        let queryParameters = try queryParametersEncodable?.toDictionary() ?? self.queryParameters
         queryParameters.forEach {
             urlQueryItems.append(URLQueryItem(name: $0.key, value: "\($0.value)"))
-        }
-        config.queryParameters.forEach {
-            urlQueryItems.append(URLQueryItem(name: $0.key, value: $0.value))
         }
         urlComponents.queryItems = !urlQueryItems.isEmpty ? urlQueryItems : nil
         guard let url = urlComponents.url else { throw RequestGenerationError.components }
