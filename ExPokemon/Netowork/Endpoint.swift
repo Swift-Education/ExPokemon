@@ -24,11 +24,8 @@ class Endpoint<R>: ResponseRequestable {
     let isFullPath: Bool
     let method: HTTPMethodType
     let headerParameters: [String: String]
-    let queryParametersEncodable: Encodable?
     let queryParameters: [String: Any]
-    let bodyParametersEncodable: Encodable?
     let bodyParameters: [String: Any]
-    let bodyEncoder: BodyEncoder
     let responseDecoder: ResponseDecoder
     
     init(path: String,
@@ -39,17 +36,13 @@ class Endpoint<R>: ResponseRequestable {
          queryParameters: [String: Any] = [:],
          bodyParametersEncodable: Encodable? = nil,
          bodyParameters: [String: Any] = [:],
-         bodyEncoder: BodyEncoder = JSONBodyEncoder(),
          responseDecoder: ResponseDecoder = JSONResponseDecoder()) {
         self.path = path
         self.isFullPath = isFullPath
         self.method = method
         self.headerParameters = headerParameters
-        self.queryParametersEncodable = queryParametersEncodable
         self.queryParameters = queryParameters
-        self.bodyParametersEncodable = bodyParametersEncodable
         self.bodyParameters = bodyParameters
-        self.bodyEncoder = bodyEncoder
         self.responseDecoder = responseDecoder
     }
 }
@@ -59,16 +52,13 @@ protocol Requestable {
     var isFullPath: Bool { get }
     var method: HTTPMethodType { get }
     var headerParameters: [String: String] { get }
-    var queryParametersEncodable: Encodable? { get }
     var queryParameters: [String: Any] { get }
-    var bodyParametersEncodable: Encodable? { get }
     var bodyParameters: [String: Any] { get }
-    var bodyEncoder: BodyEncoder { get }
 }
 
 
 extension Requestable {
-    func url(with config: NetworkConfiguarble) throws -> URL {
+    func url(with config: NetworkConfigurable) throws -> URL {
         let baseURL = config.baseURL.absoluteString.last != "/"
         ? config.baseURL.absoluteString + "/"
         : config.baseURL.absoluteString
@@ -79,16 +69,25 @@ extension Requestable {
         ) else { throw RequestGenerationError.components }
         var urlQueryItems = [URLQueryItem]()
 
-        let queryParameters = try queryParametersEncodable?.toDictionary() ?? self.queryParameters
-        queryParameters.forEach {
-            urlQueryItems.append(URLQueryItem(name: $0.key, value: "\($0.value)"))
-        }
         config.queryParameters.forEach {
             urlQueryItems.append(URLQueryItem(name: $0.key, value: $0.value))
         }
         urlComponents.queryItems = !urlQueryItems.isEmpty ? urlQueryItems : nil
         guard let url = urlComponents.url else { throw RequestGenerationError.components }
         return url
+    }
+    
+    func createRequest(with config: NetworkConfigurable) throws -> URLRequest {
+        let url = try self.url(with: config)
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+        request.allHTTPHeaderFields = headerParameters
+        if !bodyParameters.isEmpty {
+            let body = try? JSONSerialization.data(withJSONObject: bodyParameters)
+            request.httpBody = body
+        }
+        
+        return request
     }
 }
 
@@ -97,17 +96,6 @@ protocol ResponseRequestable: Requestable {
     
     var responseDecoder: ResponseDecoder { get }
 }
-
-protocol BodyEncoder {
-    func encode(_ parameters: [String: Any]) -> Data?
-}
-
-struct JSONBodyEncoder: BodyEncoder {
-    func encode(_ parameters: [String: Any]) -> Data? {
-        return try? JSONSerialization.data(withJSONObject: parameters)
-    }
-}
-
 
 protocol ResponseDecoder {
     func decode<T: Decodable>(_ data: Data) throws -> T

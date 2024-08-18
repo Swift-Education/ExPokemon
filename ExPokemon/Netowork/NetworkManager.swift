@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 final class NetworkManager {
     static let limit: Int = 20
@@ -15,76 +16,60 @@ final class NetworkManager {
             baseURL: URL(string: "https://pokeapi.co/api/v2/")!
         )
     )
-    typealias CompletionHandler<T> = (Result<T, Error>) -> Void
+    
     private let session: URLSession
-    private let config: NetworkConfiguarble
+    private let config: NetworkConfigurable
     static let baseURL: String = "https://pokeapi.co/api/v2/"
     
-    init(session: URLSession, config: NetworkConfiguarble) {
+    init(session: URLSession, config: NetworkConfigurable) {
         self.session = session
         self.config = config
-    }
-    
-    func fetch(urlString: String, completion: @escaping ((Result<Data?, Error>) -> Void)) {
-        guard let url = URL(string: urlString) else { return }
-        let request = URLRequest(url: url)
-        let dataTask = session.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-            }
-            
-            guard
-                let data = data,
-                let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode)
-            else {
-                completion(.failure(NSError(domain: "no data", code: -1)))
-                return
-            }
-            
-            completion(.success(data))
-        }
-        dataTask.resume()
     }
 }
 
 protocol NetworkService {
-    typealias CompletionHandler<T> = (Result<T, Error>) -> Void
-    
-    func request<T: Decodable, E: ResponseRequestable>(
-        with endpoint: E,
-        completion: @escaping CompletionHandler<T>
-    ) where E.Response == T
+    func request<T: Decodable, E: ResponseRequestable>(with endpoint: E) -> Single<T> where T == E.Response
 }
 
 extension NetworkManager: NetworkService {
-    func request<T: Decodable, E: ResponseRequestable>(with endpoint: E, completion: @escaping CompletionHandler<T>) where T == E.Response {
-        guard let url = try? endpoint.url(with: config) else { return }
-        let request = URLRequest(url: url)
-        let dataTask = session.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
+    func request<T: Decodable, E: ResponseRequestable>(with endpoint: E) -> Single<T> where T == E.Response {
+        do {
+            let urlRequest = try endpoint.createRequest(with: config)
+            return Single.create { single in
+                let dataTask = self.session.dataTask(with: urlRequest) { data, response, error in
+                    if let error = error {
+                        single(.failure(error))
+                    }
+                    
+                    guard
+                        let data = data,
+                        let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode)
+                    else {
+                        single(.failure(NSError(domain: "no data", code: -1)))
+                        return
+                    }
+                    
+                    guard
+                        let userInfo: T = try? JSONDecoder().decode(
+                            T.self,
+                            from: data
+                        )
+                    else {
+                        single(.failure(NSError(domain: "failed decode", code: -1)))
+                        return
+                    }
+                    print(userInfo)
+                    single(.success(userInfo))
+                }
+                dataTask.resume()
+                return Disposables.create()
             }
-            
-            guard
-                let data = data,
-                let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode)
-            else {
-                completion(.failure(NSError(domain: "no data", code: -1)))
-                return
+        } catch let error {
+            return Single.create { single in
+                single(.failure(error))
+                return Disposables.create()
             }
-            
-            guard
-                let userInfo: T = try? JSONDecoder().decode(
-                    T.self,
-                    from: data
-                )
-            else {
-                completion(.failure(NSError(domain: "failed decode", code: -1)))
-                return
-            }
-            print(userInfo)
-            completion(.success(userInfo))
         }
-        dataTask.resume()
+        
     }
 }

@@ -7,13 +7,13 @@
 
 import Foundation
 
-protocol NetworkConfiguarble {
+protocol NetworkConfigurable {
     var baseURL: URL { get }
     var headers: [String: String] { get }
     var queryParameters: [String: String] { get }
 }
 
-struct APINetworkConfig: NetworkConfiguarble {
+struct APINetworkConfig: NetworkConfigurable {
     let baseURL: URL
     let headers: [String: String]
     let queryParameters: [String: String]
