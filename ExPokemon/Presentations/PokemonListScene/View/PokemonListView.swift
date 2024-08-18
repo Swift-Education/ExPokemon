@@ -49,6 +49,10 @@ final class PokemonListView: UIView {
     public func configure(model: [Pokemon]) {
         self.model = model
     }
+    
+    public func update(model: [Pokemon]) {
+        self.model.append(contentsOf: model)
+    }
 }
 
 extension PokemonListView {
@@ -126,7 +130,7 @@ extension PokemonListView: UICollectionViewDelegateFlowLayout {
 extension PokemonListView: UIScrollViewDelegate {
     func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
+        let contentHeight = scrollView.contentSize.height / 2
         let height = scrollView.frame.size.height
 
         if offsetY > contentHeight - height {

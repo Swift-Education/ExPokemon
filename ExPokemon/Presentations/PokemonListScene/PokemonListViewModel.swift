@@ -14,13 +14,8 @@ final class PokemonListViewModel {
         self.model = model
     }
     
-    func fetchPokemonList(offset: Int = 0) -> Observable<[Pokemon]?> {
-        return Observable.create { observer in
-            self.model.fetchPokemonList(offset: offset) { list in
-                observer.onNext(list)
-            }
-            return Disposables.create()
-        }
-        
+    func fetchPokemonList(offset: Int = 0) -> Single<[Pokemon]> {
+        return model.fetchPokemonList(offset: offset)
+            .map { $0.results }
     }
 }

@@ -10,22 +10,15 @@ import RxSwift
 
 final class PokemonListModel {
     private let networkService: NetworkService
-    private var pokemonList: [Pokemon] = []
-    private let disposeBag: DisposeBag = .init()
+    private var currentOffset: Int = 0
     
     init(networkService: NetworkService) {
         self.networkService = networkService
     }
     
-    func fetchPokemonList(offset: Int = 0, completion: @escaping (([Pokemon]?) -> Void)) {
-        let endpoint = APIEndpoints.getPokemonList(offset: pokemonList.count)
-        networkService.request(with: endpoint)
-            .subscribe { list in
-                self.pokemonList += list.results
-                completion(self.pokemonList)
-            } onFailure: { error in
-                print(error.localizedDescription)
-                completion(nil)
-            }.disposed(by: disposeBag)
+    func fetchPokemonList(offset: Int = 0) -> Single<PokemonList> {
+        currentOffset += offset
+        let endpoint = APIEndpoints.getPokemonList(offset: currentOffset)
+        return networkService.request(with: endpoint)
     }
 }

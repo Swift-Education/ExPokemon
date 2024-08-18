@@ -36,8 +36,8 @@ final class PokemonListViewController: UIViewController {
     
     private func bind() {
         viewModel.fetchPokemonList()
-            .subscribe(onNext: { list in
-                self.rootView.configure(model: list ?? [])
+            .subscribe(onSuccess: { list in
+                self.rootView.configure(model: list)
             }).disposed(by: disposeBag)
     }
 }
@@ -54,8 +54,8 @@ extension PokemonListViewController: PokemonListViewDelegate {
     
     func update(current: Int) {
         viewModel.fetchPokemonList(offset: current)
-            .subscribe(onNext: { list in
-                self.rootView.configure(model: list ?? [])
+            .subscribe(onSuccess: { list in
+                self.rootView.update(model: list)
             }).disposed(by: disposeBag)
     }
 }
