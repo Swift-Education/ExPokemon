@@ -18,21 +18,15 @@ protocol CollectionViewInfinityScollable {
 protocol PokemonListViewDelegate: ViewCoordianateAbleWithIndex, CollectionViewInfinityScollable, AnyObject {}
 
 final class PokemonListView: UIView {
-    private let collectionView: UICollectionView = {
+    let collectionView: UICollectionView = {
         let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout.init())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = PokeColor.detailBackgroundColor
         return collectionView
     }()
     
-    private var model: [Pokemon] = [] {
-        didSet {
-            makeSnapshot()
-        }
-    }
+    private var model: [Pokemon] = []
     
-    private typealias DataSource = UICollectionViewDiffableDataSource<Section, Pokemon>
-    private var datasource: DataSource!
     weak var delegate: PokemonListViewDelegate?
     
     override init(frame: CGRect) {
@@ -82,35 +76,9 @@ extension PokemonListView {
     }
     
     private func configureCollectionView() {
-        datasource = makeDatasource()
         collectionView.delegate = self
+        collectionView.register(PokemonListCell.self, forCellWithReuseIdentifier: PokemonListCell.reuseIdentifier)
         collectionView.contentInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-    }
-}
-
-extension PokemonListView {
-    fileprivate enum Section {
-        case pokemon
-    }
-    
-    private func makeDatasource() -> DataSource {
-        let cellResistration = UICollectionView.CellRegistration<PokemonListCell, Pokemon> {cell,indexPath,itemIdentifier in
-            cell.configureCell(urlString: itemIdentifier.thumbnailImageURL)
-        }
-        
-        let datasource = DataSource(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
-            return collectionView.dequeueConfiguredReusableCell(using: cellResistration, for: indexPath, item: itemIdentifier)
-        }
-        
-        
-        return datasource
-    }
-    
-    private func makeSnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Pokemon>()
-        snapshot.appendSections([.pokemon])
-        snapshot.appendItems(model)
-        datasource.apply(snapshot)
     }
 }
 

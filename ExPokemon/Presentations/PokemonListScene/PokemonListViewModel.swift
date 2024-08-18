@@ -10,12 +10,29 @@ import RxSwift
 
 final class PokemonListViewModel {
     private let model: PokemonListModel
+    
     init(model: PokemonListModel) {
         self.model = model
     }
     
-    func fetchPokemonList(offset: Int = 0) -> Single<[Pokemon]> {
-        return model.fetchPokemonList(offset: offset)
-            .map { $0.results }
+    func transform(_ input: Input) -> Output {
+        let pokemonList = input.load
+            .withUnretained(self) // value, load의 값이 튜플로 만들어줌
+            .flatMapLatest { owner, _ in
+                owner.model.fetchPokemonList()
+            }
+            .map { $0.results}
+            .asObservable()
+        return .init(pokemonList: pokemonList)
+    }
+}
+
+extension PokemonListViewModel {
+    struct Input {
+        let load: Observable<Void>
+    }
+    
+    struct Output {
+        let pokemonList: Observable<[Pokemon]>
     }
 }

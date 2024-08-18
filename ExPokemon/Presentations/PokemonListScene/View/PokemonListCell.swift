@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import RxSwift
 
 final class PokemonListCell: UICollectionViewCell {
     static let reuseIdentifier: String = String(describing: PokemonListCell.self)
     
+    private let disposeBag: DisposeBag = .init()
     private let imageView: UIImageView = UIImageView(image: UIImage.pokemonBall)
     
     required init?(coder: NSCoder) {
@@ -37,7 +39,11 @@ final class PokemonListCell: UICollectionViewCell {
     }
         
     public func configureCell(urlString: String) {
-        self.imageView.fetch(with: urlString)
+        guard let url = URL(string: urlString) else { return }
+        imageView.rx.loadImage(url: url)
+            .observe(on: MainScheduler.instance)
+            .bind(to: imageView.rx.image)
+            .disposed(by: disposeBag)
     }
     
     override func prepareForReuse() {

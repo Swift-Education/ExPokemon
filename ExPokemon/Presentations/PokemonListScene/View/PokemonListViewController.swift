@@ -35,10 +35,20 @@ final class PokemonListViewController: UIViewController {
     }
     
     private func bind() {
-        viewModel.fetchPokemonList()
-            .subscribe(onSuccess: { list in
-                self.rootView.configure(model: list)
-            }).disposed(by: disposeBag)
+        let load = self.rx.viewWillAppear
+        let input = PokemonListViewModel.Input(load: load)
+        let output = viewModel.transform(input)
+        output.pokemonList
+            .bind(to: rootView.collectionView.rx.items(cellIdentifier: PokemonListCell.reuseIdentifier, cellType: PokemonListCell.self)) {
+                index, pokemon, cell in
+                cell.configureCell(urlString: pokemon.thumbnailImageURL)
+            }.disposed(by: disposeBag)
+        
+        rootView.collectionView.rx.modelSelected(Pokemon.self)
+            .withUnretained(self)
+            .subscribe { owner, pokemon in
+                pokemon.id
+            }.disposed(by: disposeBag)
     }
 }
 
