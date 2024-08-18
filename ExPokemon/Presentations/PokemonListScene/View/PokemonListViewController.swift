@@ -17,7 +17,6 @@ final class PokemonListViewController: UIViewController {
         self.rootView = rootView
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        rootView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -36,7 +35,12 @@ final class PokemonListViewController: UIViewController {
     
     private func bind() {
         let load = self.rx.viewWillAppear
-        let input = PokemonListViewModel.Input(load: load)
+        let loadMoreTrigger = rootView.collectionView.rx.contentOffset
+            .withUnretained(self)
+            .flatMap { owner, cotentOffset in
+                owner.isNearBottomEdge(cotentOffset: cotentOffset) ? Observable.just(()) : Observable.empty()
+            }
+        let input = PokemonListViewModel.Input(load: load, loadMore: loadMoreTrigger)
         let output = viewModel.transform(input)
         output.pokemonList
             .bind(to: rootView.collectionView.rx.items(cellIdentifier: PokemonListCell.reuseIdentifier, cellType: PokemonListCell.self)) {
@@ -55,13 +59,8 @@ final class PokemonListViewController: UIViewController {
                 owner.navigationController?.pushViewController(vc, animated: true)
             }.disposed(by: disposeBag)
     }
-}
-
-extension PokemonListViewController: PokemonListViewDelegate {
-    func update(current: Int) {
-//        viewModel.fetchPokemonList(offset: current)
-//            .subscribe(onSuccess: { list in
-//                self.rootView.update(model: list)
-//            }).disposed(by: disposeBag)
+    
+    private func isNearBottomEdge(cotentOffset: CGPoint) -> Bool {
+        return cotentOffset.y + rootView.collectionView.frame.size.height > rootView.collectionView.contentSize.height
     }
 }

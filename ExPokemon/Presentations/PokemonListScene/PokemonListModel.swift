@@ -10,15 +10,13 @@ import RxSwift
 
 final class PokemonListModel {
     private let networkService: NetworkService
-    private var currentOffset: Int = 0
     
     init(networkService: NetworkService) {
         self.networkService = networkService
     }
     
-    func fetchPokemonList(offset: Int = 0) -> Single<PokemonList> {
-        currentOffset += offset
-        let endpoint = APIEndpoints.getPokemonList(offset: currentOffset)
+    func fetchPokemonList(offset: Int = 0, limit: Int = 20) -> Single<PokemonList> {
+        let endpoint = APIEndpoints.getPokemonList(offset: offset, limit: limit)
         return networkService.request(with: endpoint)
     }
 }

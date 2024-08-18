@@ -7,12 +7,6 @@
 
 import UIKit
 
-protocol CollectionViewInfinityScollable {
-    func update(current offset: Int)
-}
-
-protocol PokemonListViewDelegate: CollectionViewInfinityScollable, AnyObject {}
-
 final class PokemonListView: UIView {
     let collectionView: UICollectionView = {
         let collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout.init())
@@ -22,8 +16,6 @@ final class PokemonListView: UIView {
     }()
     
     private var model: [Pokemon] = []
-    
-    weak var delegate: PokemonListViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -82,18 +74,5 @@ extension PokemonListView: UICollectionViewDelegate, UICollectionViewDelegateFlo
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width / 3 - 10
         return CGSize(width: width, height: width)
-    }
-}
-
-extension PokemonListView: UIScrollViewDelegate {
-    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height / 2
-        let height = scrollView.frame.size.height
-
-        if offsetY > contentHeight - height {
-            delegate?.update(current: model.count)
-            print("scrollView.contentOffset.y: \(scrollView.contentOffset.y)")
-        }
     }
 }
