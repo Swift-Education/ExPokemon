@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-class PokemonDetailViewModel {
+class PokemonDetailViewModel: ViewModelAble {
     private let model = PokemonDetailModel(networkService: NetworkManager.shared)
     let pokemonId: Int
     

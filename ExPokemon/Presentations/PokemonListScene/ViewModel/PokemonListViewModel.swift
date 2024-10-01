@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-final class PokemonListViewModel {
+final class PokemonListViewModel: ViewModelAble {
     private let model: PokemonListModel
     private var curronOffset = 0
     private let limit = 20
