@@ -15,8 +15,6 @@ final class PokemonListView: UIView {
         return collectionView
     }()
     
-    private var model: [Pokemon] = []
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .systemRed
@@ -26,14 +24,6 @@ final class PokemonListView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    public func configure(model: [Pokemon]) {
-        self.model = model
-    }
-    
-    public func update(model: [Pokemon]) {
-        self.model.append(contentsOf: model)
     }
 }
 
